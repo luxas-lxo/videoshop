@@ -18,10 +18,13 @@ package videoshop.inventory;
 import org.salespointframework.inventory.InventoryItem;
 import org.salespointframework.inventory.UniqueInventory;
 import org.salespointframework.inventory.UniqueInventoryItem;
+import org.salespointframework.quantity.Quantity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 // Straight forward?
 
@@ -48,4 +51,15 @@ class InventoryController {
 
 		return "stock";
 	}
+
+	@PostMapping("/confirm")
+    public String handleButtonAction(@RequestParam("menge") int m, @RequestParam("titel") String t, Model model) {
+		for (UniqueInventoryItem it : inventory.findAll()){
+			if (it.getProduct().getName().equals(t)) {
+				it.increaseQuantity(Quantity.of(m));
+			}
+		}
+        model.addAttribute("stock", inventory.findAll());
+        return "stock"; 
+    }
 }
